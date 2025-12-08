@@ -1,5 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
+import { registerDeviceToken, unregisterDeviceToken } from '../api/mobile';
+import { getPushToken } from '../utils/push';
 
 export type User = {
   id: number;
@@ -19,6 +21,7 @@ interface AuthState {
 export const AUTH_KEYS = {
   access: 'ot_access_token',
   refresh: 'ot_refresh_token',
+  push: 'ot_push_token',
 } as const;
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -29,10 +32,26 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (accessToken) await SecureStore.setItemAsync(AUTH_KEYS.access, accessToken);
     if (refreshToken) await SecureStore.setItemAsync(AUTH_KEYS.refresh, refreshToken);
     set({ accessToken, refreshToken, user });
+    try {
+      if (accessToken) {
+        const token = await getPushToken();
+        if (token) {
+          await registerDeviceToken(token);
+          await SecureStore.setItemAsync(AUTH_KEYS.push, token);
+        }
+      }
+    } catch {}
   },
   logout: async () => {
     await SecureStore.deleteItemAsync(AUTH_KEYS.access);
     await SecureStore.deleteItemAsync(AUTH_KEYS.refresh);
+    try {
+      const t = await SecureStore.getItemAsync(AUTH_KEYS.push);
+      if (t) {
+        await unregisterDeviceToken(t);
+        await SecureStore.deleteItemAsync(AUTH_KEYS.push);
+      }
+    } catch {}
     set({ accessToken: undefined, refreshToken: undefined, user: null });
   },
 }));
