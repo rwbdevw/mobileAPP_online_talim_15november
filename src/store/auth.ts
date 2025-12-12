@@ -1,7 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
-import { registerDeviceToken, unregisterDeviceToken } from '../api/mobile';
-import { getPushToken } from '../utils/push';
+// Push notifications temporarily disabled
 
 export type User = {
   id: number;
@@ -32,26 +31,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (accessToken) await SecureStore.setItemAsync(AUTH_KEYS.access, accessToken);
     if (refreshToken) await SecureStore.setItemAsync(AUTH_KEYS.refresh, refreshToken);
     set({ accessToken, refreshToken, user });
-    try {
-      if (accessToken) {
-        const token = await getPushToken();
-        if (token) {
-          await registerDeviceToken(token);
-          await SecureStore.setItemAsync(AUTH_KEYS.push, token);
-        }
-      }
-    } catch {}
   },
   logout: async () => {
     await SecureStore.deleteItemAsync(AUTH_KEYS.access);
     await SecureStore.deleteItemAsync(AUTH_KEYS.refresh);
-    try {
-      const t = await SecureStore.getItemAsync(AUTH_KEYS.push);
-      if (t) {
-        await unregisterDeviceToken(t);
-        await SecureStore.deleteItemAsync(AUTH_KEYS.push);
-      }
-    } catch {}
     set({ accessToken: undefined, refreshToken: undefined, user: null });
   },
 }));

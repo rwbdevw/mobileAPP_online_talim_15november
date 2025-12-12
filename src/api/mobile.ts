@@ -31,6 +31,26 @@ export async function enrollCourse(id: number) {
   return res.data as { success: boolean; enrolled: boolean };
 }
 
+export async function fetchMyCourses() {
+  const res = await api.get(ENDPOINTS.mobile.myCourses);
+  return res.data as { items: (CourseItem & { progress?: number })[] };
+}
+
+export type CourseProgress = {
+  enrollment_progress: number;
+  lessons: { lesson_id: number; completed: boolean; watch_time: number }[];
+};
+
+export async function fetchCourseProgress(courseId: number) {
+  const res = await api.get(ENDPOINTS.mobile.courseProgress(courseId));
+  return res.data as CourseProgress;
+}
+
+export async function sendLessonProgress(lessonId: number, payload: { watch_time?: number; completed?: boolean }) {
+  const res = await api.post(ENDPOINTS.mobile.lessonProgress(lessonId), payload);
+  return res.data as { success: boolean; enrollment_progress?: number };
+}
+
 export type ConversationItem = {
   id: number;
   other_user: { id: number; username: string };
@@ -54,6 +74,11 @@ export async function fetchMessages(conversationId: number) {
 export async function sendMessage(recipientId: number, content: string) {
   const res = await api.post(ENDPOINTS.mobile.messagesSend, { recipient_id: recipientId, content });
   return res.data as { success: boolean; message?: MessageItem; message_id?: number };
+}
+
+export async function markConversationRead(conversationId: number) {
+  const res = await api.post(ENDPOINTS.mobile.conversationRead(conversationId));
+  return res.data as { success: boolean };
 }
 
 export async function searchUsers(q: string) {

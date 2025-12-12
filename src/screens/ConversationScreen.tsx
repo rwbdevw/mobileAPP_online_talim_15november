@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchMessages, sendMessage, MessageItem } from '../api/mobile';
+import { fetchMessages, sendMessage, MessageItem, markConversationRead } from '../api/mobile';
 
 export function ConversationScreen() {
   const route = useRoute<any>();
@@ -15,12 +15,22 @@ export function ConversationScreen() {
     queryFn: () => fetchMessages(conversationId),
   });
 
+  React.useEffect(() => {
+    // mark as read on open
+    markConversationRead(conversationId)
+      .then(() => {
+        qc.invalidateQueries({ queryKey: ['conversations'] });
+      })
+      .catch(() => {});
+  }, [conversationId]);
+
   const onSend = async () => {
     const content = text.trim();
     if (!content) return;
     setText('');
     await sendMessage(otherUser.id, content);
     await qc.invalidateQueries({ queryKey: ['messages', conversationId] });
+    await qc.invalidateQueries({ queryKey: ['conversations'] });
     refetch();
   };
 

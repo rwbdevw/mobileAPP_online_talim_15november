@@ -1,22 +1,38 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
-import { fetchCourseDetail, enrollCourse } from '../api/mobile';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchCourseDetail, enrollCourse, fetchCourseProgress } from '../api/mobile';
 
 export function CourseDetailScreen() {
   const route = useRoute<any>();
   const { courseId } = route.params as { courseId: number; title?: string };
+  const navigation = useNavigation<any>();
+  const qc = useQueryClient();
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ['course-detail', courseId],
     queryFn: () => fetchCourseDetail(courseId),
   });
 
+  const { data: progressData } = useQuery({
+    queryKey: ['course-progress', courseId],
+    queryFn: () => fetchCourseProgress(courseId),
+  });
+
+  const completed = React.useMemo(() => {
+    const set = new Set<number>();
+    if (progressData?.lessons) {
+      for (const l of progressData.lessons) if (l.completed) set.add(l.lesson_id);
+    }
+    return set;
+  }, [progressData]);
+
   const onEnroll = async () => {
     try {
       await enrollCourse(courseId);
       Alert.alert('Muvaffaqiyatli', 'Kursga yozildingiz.');
+      await qc.invalidateQueries({ queryKey: ['my-courses'] });
     } catch (e: any) {
       Alert.alert('Xatolik', e?.message ?? 'Enroll amalga oshmadi');
     }
@@ -54,9 +70,12 @@ export function CourseDetailScreen() {
         data={data.lessons}
         keyExtractor={(l) => String(l.id)}
         renderItem={({ item }) => (
-          <View style={styles.lesson}>
-            <Text style={{ fontWeight: '600' }}>{item.order}. {item.title}</Text>
-          </View>
+          <TouchableOpacity
+            style={styles.lesson}
+            onPress={() => navigation.navigate('LessonPlayer', { title: item.title, videoUrl: item.video_url, lessonId: item.id, courseId })}
+          >
+            <Text style={{ fontWeight: '600' }}>{item.order}. {item.title} {completed.has(item.id) ? '✓' : ''}</Text>
+          </TouchableOpacity>
         )}
         ListEmptyComponent={<Text>Hali darslar yoʻq</Text>}
       />

@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 // Configure how notifications are handled when received in foreground
 Notifications.setNotificationHandler({
@@ -7,6 +8,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -31,7 +34,10 @@ export async function getPushToken(): Promise<string | undefined> {
       });
     }
 
-    const expoToken = await Notifications.getExpoPushTokenAsync();
+    const projectId = (Constants as any)?.expoConfig?.extra?.eas?.projectId;
+    const expoToken = await Notifications.getExpoPushTokenAsync(
+      projectId ? { projectId } : undefined as any
+    );
     return expoToken.data;
   } catch (e) {
     return undefined;
