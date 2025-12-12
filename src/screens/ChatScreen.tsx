@@ -2,11 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { fetchConversations } from '../api/mobile';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export function ChatScreen() {
   const { data, isLoading, refetch, isRefetching } = useQuery({ queryKey: ['conversations'], queryFn: fetchConversations });
   const navigation = useNavigation<any>();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+      return () => {};
+    }, [refetch])
+  );
 
   return (
     <View style={styles.container}>

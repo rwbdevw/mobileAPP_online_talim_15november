@@ -3,6 +3,7 @@ export const API_BASE_URL = 'https://online-talim-15november.onrender.com';
 export const ENDPOINTS = {
   mobile: {
     login: '/api/mobile/login',
+    register: '/api/mobile/register',
     refresh: '/api/mobile/refresh',
     me: '/api/mobile/me',
     courses: '/api/mobile/courses',

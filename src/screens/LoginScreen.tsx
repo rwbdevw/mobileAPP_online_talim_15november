@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { login } from '../api/client';
 
 export function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation<any>();
 
   const onSubmit = async () => {
     if (!username || !password) {
@@ -41,6 +43,10 @@ export function LoginScreen() {
         onChangeText={setPassword}
       />
       <Button title={loading ? 'Kutilmoqda...' : 'Kirish'} onPress={onSubmit} disabled={loading} />
+      <View style={{ height: 12 }} />
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={{ color: '#1d4ed8', textAlign: 'center' }}>{"Ro'yxatdan o'tish"}</Text>
+      </TouchableOpacity>
     </View>
   );
 }

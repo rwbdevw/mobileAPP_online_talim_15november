@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { register } from '../api/client';
 
 export function RegisterScreen() {
   const [username, setUsername] = useState('');
@@ -14,8 +15,8 @@ export function RegisterScreen() {
     }
     try {
       setLoading(true);
-      // TODO: Backend tayyor bo'lgach mobil register endpointga bog'lash
-      Alert.alert('Muvaffaqiyat', "Ro'yxatdan o'tish yakunlandi (demo)");
+      await register(username.trim(), email.trim(), password);
+      // access/refresh token saqlanadi va AppNavigator avtomatik Tabsga o'tadi
     } finally {
       setLoading(false);
     }

@@ -60,3 +60,12 @@ export async function login(username: string, password: string) {
   await useAuthStore.getState().setAuth({ accessToken: access_token, refreshToken: refresh_token, user });
   return { success: true };
 }
+
+export async function register(username: string, email: string, password: string, role?: 'student' | 'instructor') {
+  const payload: any = { username, email, password };
+  if (role) payload.role = role;
+  const res = await api.post(ENDPOINTS.mobile.register, payload);
+  const { access_token, refresh_token, user } = res.data ?? {};
+  await useAuthStore.getState().setAuth({ accessToken: access_token, refreshToken: refresh_token, user });
+  return { success: true };
+}
