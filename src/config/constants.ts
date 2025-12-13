@@ -13,6 +13,8 @@ export const ENDPOINTS = {
     myCourses: '/api/mobile/my-courses',
     courseProgress: (id: number | string) => `/api/mobile/courses/${id}/progress`,
     lessonProgress: (id: number | string) => `/api/mobile/lessons/${id}/progress`,
+    instructorCourses: '/api/mobile/instructor/courses',
+    instructorAddLesson: (courseId: number | string) => `/api/mobile/instructor/courses/${courseId}/lessons`,
     conversations: '/api/mobile/conversations',
     messages: (convId: number | string) => `/api/mobile/messages/${convId}`,
     messagesSend: '/api/mobile/messages/send',

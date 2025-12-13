@@ -1,5 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
+import axios from 'axios';
+import { API_BASE_URL, ENDPOINTS } from '../config/constants';
 // Push notifications temporarily disabled
 
 export type User = {
@@ -30,7 +32,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuth: async ({ accessToken, refreshToken, user }) => {
     if (accessToken) await SecureStore.setItemAsync(AUTH_KEYS.access, accessToken);
     if (refreshToken) await SecureStore.setItemAsync(AUTH_KEYS.refresh, refreshToken);
-    set({ accessToken, refreshToken, user });
+    set((s) => ({
+      accessToken: typeof accessToken !== 'undefined' ? accessToken : s.accessToken,
+      refreshToken: typeof refreshToken !== 'undefined' ? refreshToken : s.refreshToken,
+      user: typeof user !== 'undefined' ? user : s.user,
+    }));
   },
   logout: async () => {
     await SecureStore.deleteItemAsync(AUTH_KEYS.access);
@@ -47,6 +53,15 @@ export async function bootstrapAuth() {
     ]);
     if (accessToken || refreshToken) {
       useAuthStore.setState({ accessToken: accessToken ?? undefined, refreshToken: refreshToken ?? undefined });
+      if (accessToken) {
+        try {
+          const r = await axios.get(API_BASE_URL + ENDPOINTS.mobile.me, { headers: { Authorization: `Bearer ${accessToken}` } });
+          const user = r.data?.user;
+          if (user) useAuthStore.setState({ user });
+        } catch (_) {
+          // ignore
+        }
+      }
     }
   } catch (e) {
     // noop

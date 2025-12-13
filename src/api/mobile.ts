@@ -95,3 +95,18 @@ export async function unregisterDeviceToken(token: string) {
   const res = await api.post(ENDPOINTS.mobile.devicesUnregister, { token });
   return res.data as { success: boolean };
 }
+
+export async function fetchInstructorCourses() {
+  const res = await api.get(ENDPOINTS.mobile.instructorCourses);
+  return res.data as { items: CourseItem[] };
+}
+
+export async function createInstructorCourse(payload: { title: string; description?: string; price?: number; category?: string }) {
+  const res = await api.post(ENDPOINTS.mobile.instructorCourses, payload);
+  return res.data as { id: number; title: string };
+}
+
+export async function addInstructorLesson(courseId: number, payload: { title: string; video_url?: string; order?: number }) {
+  const res = await api.post(ENDPOINTS.mobile.instructorAddLesson(courseId), payload);
+  return res.data as { id: number; title: string };
+}

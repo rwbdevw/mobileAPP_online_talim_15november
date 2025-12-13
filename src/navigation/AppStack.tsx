@@ -5,6 +5,8 @@ import { ConversationScreen } from '../screens/ConversationScreen';
 import { NewChatScreen } from '../screens/NewChatScreen';
 import { CourseDetailScreen } from '../screens/CourseDetailScreen';
 import { LessonPlayerScreen } from '../screens/LessonPlayerScreen';
+import { NewCourseScreen } from '../screens/NewCourseScreen';
+import { AddLessonScreen } from '../screens/AddLessonScreen';
 
 export type AppStackParamList = {
   Tabs: undefined;
@@ -12,6 +14,8 @@ export type AppStackParamList = {
   NewChat: undefined;
   CourseDetail: { courseId: number; title?: string };
   LessonPlayer: { title: string; videoUrl: string; lessonId: number; courseId: number };
+  NewCourse: undefined;
+  AddLesson: { courseId: number; title?: string };
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -24,6 +28,8 @@ export function AppStack() {
       <Stack.Screen name="NewChat" component={NewChatScreen} options={{ title: 'Yangi suhbat' }} />
       <Stack.Screen name="CourseDetail" component={CourseDetailScreen} options={({ route }) => ({ title: route.params.title ?? 'Kurs' })} />
       <Stack.Screen name="LessonPlayer" component={LessonPlayerScreen} options={({ route }) => ({ title: route.params.title ?? 'Dars' })} />
+      <Stack.Screen name="NewCourse" component={NewCourseScreen} options={{ title: 'Yangi kurs' }} />
+      <Stack.Screen name="AddLesson" component={AddLessonScreen} options={({ route }) => ({ title: route.params.title ? `Dars qo'shish - ${route.params.title}` : `Dars qo'shish` })} />
     </Stack.Navigator>
   );
 }
