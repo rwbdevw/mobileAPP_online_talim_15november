@@ -10,6 +10,7 @@ import { AddLessonScreen } from '../screens/AddLessonScreen';
 import { ManageLessonsScreen } from '../screens/ManageLessonsScreen';
 import { EditLessonScreen } from '../screens/EditLessonScreen';
 import { EditCourseScreen } from '../screens/EditCourseScreen';
+import { EditProfileScreen } from '../screens/EditProfileScreen';
 
 export type AppStackParamList = {
   Tabs: undefined;
@@ -22,6 +23,7 @@ export type AppStackParamList = {
   ManageLessons: { courseId: number; title?: string };
   EditLesson: { lessonId: number; title?: string; video_url?: string; order?: number };
   EditCourse: { courseId: number; title?: string };
+  EditProfile: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -39,6 +41,7 @@ export function AppStack() {
       <Stack.Screen name="ManageLessons" component={ManageLessonsScreen} options={({ route }) => ({ title: route.params.title ? `Darslar - ${route.params.title}` : 'Darslar' })} />
       <Stack.Screen name="EditLesson" component={EditLessonScreen} options={{ title: 'Darsni tahrirlash' }} />
       <Stack.Screen name="EditCourse" component={EditCourseScreen} options={{ title: 'Kursni tahrirlash' }} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Profilni tahrirlash' }} />
     </Stack.Navigator>
   );
 }

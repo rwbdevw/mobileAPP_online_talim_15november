@@ -24,6 +24,8 @@ export const ENDPOINTS = {
     conversationRead: (convId: number | string) => `/api/mobile/conversations/${convId}/read`,
     devicesRegister: '/api/mobile/devices/register',
     devicesUnregister: '/api/mobile/devices/unregister',
+    profileUpdate: '/api/mobile/profile',
+    profileUploadImage: '/api/mobile/profile/upload-image',
   },
   legacy: {
     sendMessage: '/api/send-message',

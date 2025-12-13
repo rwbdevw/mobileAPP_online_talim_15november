@@ -7,8 +7,11 @@ import { API_BASE_URL, ENDPOINTS } from '../config/constants';
 export type User = {
   id: number;
   username: string;
-  email?: string;
+  email?: string | null;
   role?: string;
+  profile_image?: string | null;
+  bio?: string | null;
+  created_at?: string | null;
 };
 
 interface AuthState {

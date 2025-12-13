@@ -139,3 +139,22 @@ export async function instructorUploadFile(file: { uri: string; name: string; ty
   });
   return res.data as { success: boolean; url?: string; filename?: string; message?: string };
 }
+
+export async function fetchMe() {
+  const res = await api.get(ENDPOINTS.mobile.me);
+  return res.data as { user: { id: number; username: string; email?: string | null; role?: string; profile_image?: string | null; bio?: string | null; created_at?: string | null } };
+}
+
+export async function updateProfile(payload: { username?: string; email?: string; bio?: string; current_password?: string; new_password?: string; confirm_password?: string }) {
+  const res = await api.post(ENDPOINTS.mobile.profileUpdate, payload);
+  return res.data as { success: boolean; message?: string };
+}
+
+export async function uploadProfileImage(file: { uri: string; name: string; type?: string }) {
+  const fd: any = new FormData();
+  fd.append('file', { uri: file.uri, name: file.name, type: file.type || 'application/octet-stream' } as any);
+  const res = await api.post(ENDPOINTS.mobile.profileUploadImage, fd, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data as { success: boolean; url?: string; filename?: string; message?: string };
+}
