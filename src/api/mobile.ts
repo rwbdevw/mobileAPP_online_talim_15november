@@ -130,3 +130,12 @@ export async function deleteInstructorLesson(lessonId: number) {
   const res = await api.delete(ENDPOINTS.mobile.instructorLesson(lessonId));
   return res.data as { success: boolean };
 }
+
+export async function instructorUploadFile(file: { uri: string; name: string; type?: string }) {
+  const fd: any = new FormData();
+  fd.append('file', { uri: file.uri, name: file.name, type: file.type || 'application/octet-stream' } as any);
+  const res = await api.post(ENDPOINTS.mobile.instructorUpload, fd, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data as { success: boolean; url?: string; filename?: string; message?: string };
+}

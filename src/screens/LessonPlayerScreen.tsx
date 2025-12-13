@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Video, ResizeMode } from 'expo-av';
 import { API_BASE_URL } from '../config/constants';
@@ -16,9 +16,18 @@ export function LessonPlayerScreen() {
   const [videoKey, setVideoKey] = React.useState(0);
 
   const source = React.useMemo(() => {
-    if (!videoUrl) return null;
-    if (/^https?:\/\//i.test(videoUrl)) return { uri: videoUrl };
-    return { uri: `${API_BASE_URL}${videoUrl.startsWith('/') ? '' : '/'}${videoUrl}` };
+    const raw = (videoUrl || '').trim();
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw)) return { uri: raw };
+    const endsVideo = /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(raw);
+    // '/uploads/...'
+    if (raw.startsWith('/uploads/')) return { uri: `${API_BASE_URL}${raw}` };
+    // 'uploads/...'
+    if (raw.startsWith('uploads/')) return { uri: `${API_BASE_URL}/${raw}` };
+    // bare filename like 'file.mp4'
+    if (endsVideo && !raw.includes('/')) return { uri: `${API_BASE_URL}/uploads/${raw}` };
+    // fallback: treat as relative path
+    return { uri: `${API_BASE_URL}${raw.startsWith('/') ? '' : '/'}${raw}` };
   }, [videoUrl]);
 
   if (!source) {
@@ -98,6 +107,11 @@ export function LessonPlayerScreen() {
             <TouchableOpacity style={styles.retryBtn} onPress={() => { setError(null); setBuffering(true); setVideoKey((k) => k + 1); }}>
               <Text style={styles.retryText}>Qayta urinish</Text>
             </TouchableOpacity>
+            {!!(source as any)?.uri && (
+              <TouchableOpacity style={[styles.retryBtn, { backgroundColor: '#10b981' }]} onPress={() => Linking.openURL((source as any).uri)}>
+                <Text style={styles.retryText}>Brauzerda ochish</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </View>
