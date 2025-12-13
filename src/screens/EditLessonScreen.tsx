@@ -17,11 +17,12 @@ export function EditLessonScreen() {
     const u = (videoUrl || '').trim();
     if (!u) return null;
     const isHttp = /^https?:\/\//i.test(u);
-    const endsMp4 = /\.mp4(\?|#|$)/i.test(u);
-    if (isHttp && !endsMp4) return 'HTTPS havola .mp4 bilan tugashi tavsiya etiladi';
+    const endsVideo = /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(u);
+    if (isHttp && !endsVideo) return 'HTTPS havola .mp4/.webm/.mov/.m4v bilan tugashi tavsiya etiladi';
     if (!isHttp) {
       const startsUploads = u.startsWith('/uploads/') || u.startsWith('uploads/');
-      if (!startsUploads || !endsMp4) return "Nisbiy yo'l /uploads/... va .mp4 bo'lishi kerak";
+      const bareFilename = !u.includes('/') && endsVideo;
+      if (!(startsUploads || bareFilename)) return "Nisbiy yo'l /uploads/... yoki oddiy fayl nomi (.mp4/.webm/.mov/.m4v) bo'lishi kerak";
     }
     return null;
   }, [videoUrl]);
@@ -60,7 +61,7 @@ export function EditLessonScreen() {
         Alert.alert('Xatolik', out?.message || 'Yuklashda xatolik');
         return;
       }
-      setVideoUrl(out.url);
+      setVideoUrl(out.filename || out.url.replace('/uploads/', ''));
     } catch (e: any) {
       Alert.alert('Xatolik', e?.message ?? 'Yuklashda xatolik');
     } finally {
