@@ -19,11 +19,12 @@ export function AddLessonScreen() {
     const u = (videoUrl || '').trim();
     if (!u) return null;
     const isHttp = /^https?:\/\//i.test(u);
-    const endsVideo = /\.(mp4|webm)(\?|#|$)/i.test(u);
-    if (isHttp && !endsVideo) return 'HTTPS havola .mp4 yoki .webm bilan tugashi tavsiya etiladi';
+    const endsVideo = /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(u);
+    if (isHttp && !endsVideo) return 'HTTPS havola .mp4/.webm/.mov/.m4v bilan tugashi tavsiya etiladi';
     if (!isHttp) {
       const startsUploads = u.startsWith('/uploads/') || u.startsWith('uploads/');
-      if (!startsUploads || !endsVideo) return "Nisbiy yo'l /uploads/... va .mp4/.webm bo'lishi kerak";
+      const bareFilename = !u.includes('/') && endsVideo; // e.g. file.mp4
+      if (!(startsUploads || bareFilename)) return "Nisbiy yo'l /uploads/... yoki oddiy fayl nomi (.mp4/.webm/.mov/.m4v) bo'lishi kerak";
     }
     return null;
   }, [videoUrl]);
@@ -63,7 +64,8 @@ export function AddLessonScreen() {
         Alert.alert('Xatolik', out?.message || 'Yuklashda xatolik');
         return;
       }
-      setVideoUrl(out.url);
+      // Web templates expect DB to store only filename (no '/uploads/').
+      setVideoUrl(out.filename || out.url.replace('/uploads/', ''));
     } catch (e: any) {
       Alert.alert('Xatolik', e?.message ?? 'Yuklashda xatolik');
     } finally {
