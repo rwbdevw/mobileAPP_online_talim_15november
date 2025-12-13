@@ -26,9 +26,9 @@ export function RegisterScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{"Ro'yxatdan o'tish"}</Text>
-      <TextInput placeholder="Username" style={styles.input} autoCapitalize="none" value={username} onChangeText={setUsername} />
-      <TextInput placeholder="Email" style={styles.input} autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} />
-      <TextInput placeholder="Parol" style={styles.input} secureTextEntry value={password} onChangeText={setPassword} />
+      <TextInput placeholder="Username" placeholderTextColor="#94A3B8" style={styles.input} autoCapitalize="none" value={username} onChangeText={setUsername} />
+      <TextInput placeholder="Email" placeholderTextColor="#94A3B8" style={styles.input} autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} />
+      <TextInput placeholder="Parol" placeholderTextColor="#94A3B8" style={styles.input} secureTextEntry value={password} onChangeText={setPassword} />
       <View style={styles.roleRow}>
         <TouchableOpacity onPress={() => setRole('student')} style={[styles.roleOption, role === 'student' && styles.roleOptionActive]}>
           <Text style={[styles.roleOptionText, role === 'student' && styles.roleOptionTextActive]}>Student</Text>

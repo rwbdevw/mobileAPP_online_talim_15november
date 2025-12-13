@@ -34,9 +34,9 @@ export function AddLessonScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{"Dars qo'shish"}</Text>
-      <TextInput placeholder="Sarlavha" style={styles.input} value={title} onChangeText={setTitle} />
-      <TextInput placeholder="Video URL (nisbiy yoki to'liq)" style={styles.input} value={videoUrl} onChangeText={setVideoUrl} />
-      <TextInput placeholder="Tartib (1,2,3...)" style={styles.input} keyboardType="numeric" value={order} onChangeText={setOrder} />
+      <TextInput placeholder="Sarlavha" placeholderTextColor="#94A3B8" style={styles.input} value={title} onChangeText={setTitle} />
+      <TextInput placeholder="Video URL (nisbiy yoki to'liq)" placeholderTextColor="#94A3B8" style={styles.input} value={videoUrl} onChangeText={setVideoUrl} />
+      <TextInput placeholder="Tartib (1,2,3...)" placeholderTextColor="#94A3B8" style={styles.input} keyboardType="numeric" value={order} onChangeText={setOrder} />
       <Button title={loading ? 'Kutilmoqda...' : 'Saqlash'} onPress={onSubmit} disabled={loading} />
     </View>
   );

@@ -55,7 +55,7 @@ export function ConversationScreen() {
           refreshing={isRefetching || isLoading}
         />
         <View style={styles.inputRow}>
-          <TextInput style={styles.input} placeholder="Xabar yozing..." value={text} onChangeText={setText} />
+          <TextInput style={styles.input} placeholder="Xabar yozing..." placeholderTextColor="#94A3B8" value={text} onChangeText={setText} />
           <TouchableOpacity style={styles.send} onPress={onSend}>
             <Text style={{ color: 'white', fontWeight: '700' }}>Yuborish</Text>
           </TouchableOpacity>

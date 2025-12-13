@@ -19,6 +19,7 @@ export function CoursesScreen() {
         <TextInput
           style={styles.search}
           placeholder="Qidirish"
+          placeholderTextColor="#94A3B8"
           value={search}
           onChangeText={setSearch}
           onSubmitEditing={() => refetch()}

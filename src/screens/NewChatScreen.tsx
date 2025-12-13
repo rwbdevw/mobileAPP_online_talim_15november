@@ -42,7 +42,7 @@ export function NewChatScreen() {
     <View style={styles.container}>
       <Text style={styles.header}>Foydalanuvchi toping</Text>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Username" value={q} onChangeText={setQ} onSubmitEditing={() => refetch()} />
+        <TextInput style={styles.input} placeholder="Username" placeholderTextColor="#94A3B8" value={q} onChangeText={setQ} onSubmitEditing={() => refetch()} />
         <TouchableOpacity style={styles.btn} onPress={() => refetch()}>
           <Text style={styles.btnText}>Qidir</Text>
         </TouchableOpacity>
@@ -60,7 +60,7 @@ export function NewChatScreen() {
       />
       <Text style={styles.header}>Xabar</Text>
       <View style={styles.row}>
-        <TextInput style={styles.input} placeholder="Xabar yozing..." value={message} onChangeText={setMessage} />
+        <TextInput style={styles.input} placeholder="Xabar yozing..." placeholderTextColor="#94A3B8" value={message} onChangeText={setMessage} />
         <TouchableOpacity style={styles.btn} onPress={onSend}>
           <Text style={styles.btnText}>Yuborish</Text>
         </TouchableOpacity>

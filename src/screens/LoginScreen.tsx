@@ -30,6 +30,7 @@ export function LoginScreen() {
       <Text style={styles.title}>Kirish</Text>
       <TextInput
         placeholder="Username"
+        placeholderTextColor="#94A3B8"
         style={styles.input}
         autoCapitalize="none"
         value={username}
@@ -37,6 +38,7 @@ export function LoginScreen() {
       />
       <TextInput
         placeholder="Parol"
+        placeholderTextColor="#94A3B8"
         style={styles.input}
         secureTextEntry
         value={password}

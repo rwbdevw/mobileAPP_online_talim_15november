@@ -110,3 +110,23 @@ export async function addInstructorLesson(courseId: number, payload: { title: st
   const res = await api.post(ENDPOINTS.mobile.instructorAddLesson(courseId), payload);
   return res.data as { id: number; title: string };
 }
+
+export async function updateInstructorCourse(courseId: number, payload: { title?: string; description?: string; price?: number; category?: string }) {
+  const res = await api.patch(ENDPOINTS.mobile.instructorCourse(courseId), payload);
+  return res.data as { success: boolean };
+}
+
+export async function deleteInstructorCourse(courseId: number) {
+  const res = await api.delete(ENDPOINTS.mobile.instructorCourse(courseId));
+  return res.data as { success: boolean };
+}
+
+export async function updateInstructorLesson(lessonId: number, payload: { title?: string; video_url?: string; order?: number }) {
+  const res = await api.patch(ENDPOINTS.mobile.instructorLesson(lessonId), payload);
+  return res.data as { success: boolean };
+}
+
+export async function deleteInstructorLesson(lessonId: number) {
+  const res = await api.delete(ENDPOINTS.mobile.instructorLesson(lessonId));
+  return res.data as { success: boolean };
+}

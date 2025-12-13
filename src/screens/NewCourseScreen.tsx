@@ -33,10 +33,10 @@ export function NewCourseScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Yangi kurs</Text>
-      <TextInput placeholder="Sarlavha" style={styles.input} value={title} onChangeText={setTitle} />
-      <TextInput placeholder="Tavsif" style={[styles.input, { height: 100 }]} multiline value={description} onChangeText={setDescription} />
-      <TextInput placeholder="Narx" style={styles.input} keyboardType="numeric" value={price} onChangeText={setPrice} />
-      <TextInput placeholder="Kategoriya" style={styles.input} value={category} onChangeText={setCategory} />
+      <TextInput placeholder="Sarlavha" placeholderTextColor="#94A3B8" style={styles.input} value={title} onChangeText={setTitle} />
+      <TextInput placeholder="Tavsif" placeholderTextColor="#94A3B8" style={[styles.input, { height: 100 }]} multiline value={description} onChangeText={setDescription} />
+      <TextInput placeholder="Narx" placeholderTextColor="#94A3B8" style={styles.input} keyboardType="numeric" value={price} onChangeText={setPrice} />
+      <TextInput placeholder="Kategoriya" placeholderTextColor="#94A3B8" style={styles.input} value={category} onChangeText={setCategory} />
       <Button title={loading ? 'Kutilmoqda...' : 'Saqlash'} onPress={onSubmit} disabled={loading} />
     </View>
   );

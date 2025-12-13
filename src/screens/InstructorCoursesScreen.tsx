@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { fetchInstructorCourses } from '../api/mobile';
+import { fetchInstructorCourses, deleteInstructorCourse } from '../api/mobile';
 import { useNavigation } from '@react-navigation/native';
 
 export function InstructorCoursesScreen() {
@@ -26,8 +26,29 @@ export function InstructorCoursesScreen() {
             {!!item.category && <Text style={styles.chip}>{item.category}</Text>}
             <Text style={styles.cardDesc}>{item.description}</Text>
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-              <TouchableOpacity style={styles.outlineBtn} onPress={() => (navigation as any)?.getParent?.()?.navigate('AddLesson', { courseId: item.id, title: item.title })}>
-                <Text style={styles.outlineBtnText}>Add Lesson</Text>
+              <TouchableOpacity style={styles.outlineBtn} onPress={() => (navigation as any)?.getParent?.()?.navigate('ManageLessons', { courseId: item.id, title: item.title })}>
+                <Text style={styles.outlineBtnText}>Manage Lessons</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.outlineBtn} onPress={() => (navigation as any)?.getParent?.()?.navigate('EditCourse', { courseId: item.id, title: item.title })}>
+                <Text style={styles.outlineBtnText}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.outlineBtn, { borderColor: '#ef4444' }]}
+                onPress={() =>
+                  Alert.alert("O'chirish", "Kursni o'chirasizmi?", [
+                    { text: 'Bekor qilish' },
+                    {
+                      text: "O'chirish",
+                      style: 'destructive',
+                      onPress: async () => {
+                        await deleteInstructorCourse(item.id);
+                        await (refetch?.());
+                      },
+                    },
+                  ])
+                }
+              >
+                <Text style={[styles.outlineBtnText, { color: '#ef4444' }]}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
