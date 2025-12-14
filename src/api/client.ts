@@ -58,6 +58,13 @@ export async function login(username: string, password: string) {
   const res = await api.post(ENDPOINTS.mobile.login, { username, password });
   const { access_token, refresh_token, user } = res.data ?? {};
   await useAuthStore.getState().setAuth({ accessToken: access_token, refreshToken: refresh_token, user });
+  // Hydrate full user profile (avatar, bio, created_at) after auth
+  try {
+    const r = await api.get(ENDPOINTS.mobile.me);
+    if (r?.data?.user) {
+      await useAuthStore.getState().setAuth({ user: r.data.user });
+    }
+  } catch {}
   return { success: true };
 }
 
@@ -67,5 +74,12 @@ export async function register(username: string, email: string, password: string
   const res = await api.post(ENDPOINTS.mobile.register, payload);
   const { access_token, refresh_token, user } = res.data ?? {};
   await useAuthStore.getState().setAuth({ accessToken: access_token, refreshToken: refresh_token, user });
+  // Hydrate full user profile after registration
+  try {
+    const r = await api.get(ENDPOINTS.mobile.me);
+    if (r?.data?.user) {
+      await useAuthStore.getState().setAuth({ user: r.data.user });
+    }
+  } catch {}
   return { success: true };
 }

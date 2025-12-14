@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, Button, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useAuthStore } from '../store/auth';
 import { API_BASE_URL } from '../config/constants';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { fetchMe } from '../api/mobile';
 
 export function ProfileScreen() {
   const user = useAuthStore((s) => s.user);
@@ -25,6 +26,20 @@ export function ProfileScreen() {
 
   const badge = roleBadge(user?.role);
   const join = user?.created_at ? new Date(user.created_at) : undefined;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      let mounted = true;
+      fetchMe()
+        .then((r) => {
+          if (mounted && r?.user) useAuthStore.setState({ user: r.user });
+        })
+        .catch(() => {});
+      return () => {
+        mounted = false;
+      };
+    }, [])
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
