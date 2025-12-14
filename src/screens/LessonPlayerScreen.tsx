@@ -1,19 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { Video, ResizeMode } from 'expo-av';
 import { API_BASE_URL } from '../config/constants';
-import { sendLessonProgress } from '../api/mobile';
+import { sendLessonProgress, fetchLessonQuiz } from '../api/mobile';
 import { useQueryClient } from '@tanstack/react-query';
 
 export function LessonPlayerScreen() {
   const route = useRoute<any>();
   const { title, videoUrl, lessonId, courseId }: { title: string; videoUrl: string; lessonId: number; courseId: number } = route.params;
+  const navigation = useNavigation<any>();
   const qc = useQueryClient();
   const accumRef = React.useRef(0);
   const [buffering, setBuffering] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [videoKey, setVideoKey] = React.useState(0);
+  const [quiz, setQuiz] = React.useState<{ exists: boolean; passed: boolean; quizId?: number } | null>(null);
 
   const source = React.useMemo(() => {
     const raw = (videoUrl || '').trim();
@@ -29,6 +31,22 @@ export function LessonPlayerScreen() {
     // fallback: treat as relative path
     return { uri: `${API_BASE_URL}${raw.startsWith('/') ? '' : '/'}${raw}` };
   }, [videoUrl]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      let mounted = true;
+      fetchLessonQuiz(lessonId)
+        .then((r) => {
+          if (!mounted) return;
+          if (r?.exists && r.quiz) setQuiz({ exists: true, passed: !!r.passed, quizId: r.quiz.id });
+          else setQuiz({ exists: false, passed: true });
+        })
+        .catch(() => setQuiz({ exists: false, passed: true }));
+      return () => {
+        mounted = false;
+      };
+    }, [lessonId])
+  );
 
   if (!source) {
     return (
@@ -62,6 +80,10 @@ export function LessonPlayerScreen() {
                 setBuffering(false);
               }
               if (status.didJustFinish) {
+                // Respect minimal gating: if quiz exists and not passed, don't mark completed
+                if (quiz?.exists && !quiz?.passed) {
+                  return;
+                }
                 sendLessonProgress(lessonId, { completed: true })
                   .then(() => {
                     qc.invalidateQueries({ queryKey: ['my-courses'] });
@@ -115,6 +137,11 @@ export function LessonPlayerScreen() {
           </View>
         )}
       </View>
+      {!!(quiz && quiz.exists && !quiz.passed) && (
+        <TouchableOpacity style={[styles.cta, { backgroundColor: '#f59e0b' }]} onPress={() => navigation.navigate('Quiz', { lessonId, courseId })}>
+          <Text style={styles.ctaText}>Testni topshirish (darsni tugatish uchun)</Text>
+        </TouchableOpacity>
+      )}
       <Text style={styles.helper}>Agar video ochilmasa, internet aloqasini tekshiring yoki keyinroq urinib ko'ring.</Text>
     </View>
   );
@@ -131,4 +158,6 @@ const styles = StyleSheet.create({
   retryBtn: { marginTop: 10, backgroundColor: '#2563eb', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 },
   retryText: { color: '#fff', fontWeight: '700' },
   helper: { marginTop: 12, color: '#555' },
+  cta: { marginTop: 12, paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
+  ctaText: { color: '#111827', fontWeight: '700' },
 });

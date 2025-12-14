@@ -158,3 +158,21 @@ export async function uploadProfileImage(file: { uri: string; name: string; type
   });
   return res.data as { success: boolean; url?: string; filename?: string; message?: string };
 }
+
+export type LessonQuiz = {
+  id: number;
+  title: string;
+  description: string;
+  passing_score: number;
+  questions: { id: number; order: number; question: string; options: { A?: string; B?: string; C?: string; D?: string } }[];
+};
+
+export async function fetchLessonQuiz(lessonId: number) {
+  const res = await api.get(`/api/mobile/lessons/${lessonId}/quiz`);
+  return res.data as { exists: boolean; quiz?: LessonQuiz; passed?: boolean; best_score?: number | null };
+}
+
+export async function submitQuiz(quizId: number, answers: Record<string | number, string>) {
+  const res = await api.post(`/api/mobile/quizzes/${quizId}/submit`, { answers });
+  return res.data as { success: boolean; score: number; passed: boolean };
+}

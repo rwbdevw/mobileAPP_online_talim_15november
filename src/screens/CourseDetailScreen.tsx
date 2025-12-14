@@ -61,6 +61,14 @@ export function CourseDetailScreen() {
       {!!data.instructor && <Text style={styles.meta}>O'qituvchi: {data.instructor.username}</Text>}
       <Text style={styles.desc}>{data.description}</Text>
       <Text style={styles.meta}>Narx: {data.price ?? 0}</Text>
+      {typeof progressData?.enrollment_progress === 'number' && (
+        <View style={{ marginTop: 10 }}>
+          <View style={styles.progressWrap}>
+            <View style={[styles.progressFill, { width: `${Math.max(0, Math.min(100, Math.round(progressData?.enrollment_progress ?? 0)))}%` }]} />
+          </View>
+          <Text style={[styles.meta, { marginTop: 4 }]}>Progress: {Math.round(progressData?.enrollment_progress ?? 0)}%</Text>
+        </View>
+      )}
       <TouchableOpacity style={styles.enroll} onPress={onEnroll}>
         <Text style={styles.enrollText}>Enroll</Text>
       </TouchableOpacity>
@@ -93,4 +101,6 @@ const styles = StyleSheet.create({
   enroll: { alignSelf: 'flex-start', backgroundColor: '#16a34a', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, marginTop: 8 },
   enrollText: { color: 'white', fontWeight: '700' },
   lesson: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  progressWrap: { height: 8, backgroundColor: '#e5e7eb', borderRadius: 999, overflow: 'hidden' },
+  progressFill: { height: 8, backgroundColor: '#2563eb' },
 });

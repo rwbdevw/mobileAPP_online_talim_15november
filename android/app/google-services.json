@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "936492380132",
+    "project_id": "onlinetalimmobileapp",
+    "storage_bucket": "onlinetalimmobileapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936492380132:android:5fd6dd487edabce64ca1f1",
+        "android_client_info": {
+          "package_name": "com.rwbdev.onlinetalim"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArzchJ02V0-_m9W4JIVQ09IdOwPsT6mUs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
