@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchCourseDetail, deleteInstructorLesson } from '../api/mobile';
+import { fetchCourseDetail, deleteInstructorLesson, instructorCreateQuiz } from '../api/mobile';
 
 export function ManageLessonsScreen() {
   const route = useRoute<any>();
@@ -61,6 +61,25 @@ export function ManageLessonsScreen() {
             </View>
             <TouchableOpacity style={styles.outlineBtn} onPress={() => (navigation as any)?.navigate('EditLesson', { lessonId: item.id, title: item.title, video_url: item.video_url, order: item.order })}>
               <Text style={styles.outlineBtnText}>Tahrirlash</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.outlineBtn, { borderColor: '#10b981' }]}
+              onPress={async () => {
+                try {
+                  const r = await instructorCreateQuiz(item.id);
+                  if (!r?.success) {
+                    Alert.alert('Xatolik', r?.error || 'Test yaratilmadi');
+                    return;
+                  }
+                  Alert.alert('Muvaffaqiyatli', `Test yaratildi (ID: ${r.quiz_id})${r.created_sample ? ' — namunaviy savollar bilan' : ''}`);
+                } catch (e: any) {
+                  Alert.alert('Xatolik', e?.message ?? 'Xatolik yuz berdi');
+                } finally {
+                  await refetch();
+                }
+              }}
+            >
+              <Text style={[styles.outlineBtnText, { color: '#10b981' }]}>Test qo'shish</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.outlineBtn, { borderColor: '#ef4444' }]} onPress={() => onDelete(item.id)}>
               <Text style={[styles.outlineBtnText, { color: '#ef4444' }]}>O'chirish</Text>

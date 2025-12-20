@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { fetchMyCourses, CourseItem } from '../api/mobile';
 import { useNavigation } from '@react-navigation/native';
+import { Card } from '../components/Card';
+import { ProgressBar } from '../components/ProgressBar';
+import { colors } from '../theme';
 
 export function MyCoursesScreen() {
   const { data, isLoading, isRefetching, refetch } = useQuery({ queryKey: ['my-courses'], queryFn: fetchMyCourses });
@@ -23,23 +26,20 @@ export function MyCoursesScreen() {
         data={(data?.items ?? []) as (CourseItem & { progress?: number })[]}
         keyExtractor={(c) => String(c.id)}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate('CourseDetail', { courseId: item.id, title: item.title })}
-          >
+          <Card onPress={() => navigation.navigate('CourseDetail', { courseId: item.id, title: item.title })}>
             <Text style={styles.cardTitle}>{item.title}</Text>
-            {!!item.category && <Text style={styles.chip}>{item.category}</Text>}
-            {!!item.instructor && <Text style={styles.meta}>O'qituvchi: {item.instructor.username}</Text>}
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+              {!!item.category && <Text style={styles.chip}>{item.category}</Text>}
+              {!!item.instructor && <Text style={[styles.meta, { marginLeft: 8 }]}>O'qituvchi: {item.instructor.username}</Text>}
+            </View>
             <Text style={styles.meta}>Narx: {item.price ?? 0}</Text>
             {typeof item.progress === 'number' && (
               <View style={{ marginTop: 8 }}>
-                <View style={styles.progressWrap}>
-                  <View style={[styles.progressFill, { width: `${Math.max(0, Math.min(100, Math.round(item.progress ?? 0)))}%` }]} />
-                </View>
+                <ProgressBar value={item.progress} />
                 <Text style={[styles.meta, { marginTop: 4 }]}>Progress: {Math.round(item.progress)}%</Text>
               </View>
             )}
-          </TouchableOpacity>
+          </Card>
         )}
         onRefresh={refetch}
         refreshing={isRefetching}
@@ -50,13 +50,10 @@ export function MyCoursesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 12 },
-  card: { borderWidth: 1, borderColor: '#eee', padding: 12, borderRadius: 12, marginBottom: 10 },
-  cardTitle: { fontWeight: '700', marginBottom: 4 },
-  chip: { alignSelf: 'flex-start', backgroundColor: '#eff6ff', color: '#1d4ed8', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, marginBottom: 6 },
+  title: { fontSize: 22, fontWeight: '700', marginBottom: 12, color: colors.text },
+  cardTitle: { fontWeight: '700', marginBottom: 6, fontSize: 16, color: colors.text },
+  chip: { alignSelf: 'flex-start', backgroundColor: '#eff6ff', color: '#1d4ed8', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999 },
   meta: { color: '#444' },
-  progressWrap: { height: 8, backgroundColor: '#e5e7eb', borderRadius: 999, overflow: 'hidden' },
-  progressFill: { height: 8, backgroundColor: '#2563eb' },
 });

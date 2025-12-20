@@ -140,6 +140,11 @@ export async function instructorUploadFile(file: { uri: string; name: string; ty
   return res.data as { success: boolean; url?: string; filename?: string; message?: string };
 }
 
+export async function instructorCreateQuiz(lessonId: number, payload?: { title?: string; description?: string; passing_score?: number; questions?: any[] }) {
+  const res = await api.post(ENDPOINTS.mobile.instructorCreateQuiz(lessonId), payload ?? {});
+  return res.data as { success: boolean; quiz_id?: number; created_sample?: boolean; error?: string };
+}
+
 export async function fetchMe() {
   const res = await api.get(ENDPOINTS.mobile.me);
   return res.data as { user: { id: number; username: string; email?: string | null; role?: string; profile_image?: string | null; bio?: string | null; created_at?: string | null } };

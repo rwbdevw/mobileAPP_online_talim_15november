@@ -15,6 +15,7 @@ export const ENDPOINTS = {
     lessonProgress: (id: number | string) => `/api/mobile/lessons/${id}/progress`,
     instructorCourses: '/api/mobile/instructor/courses',
     instructorAddLesson: (courseId: number | string) => `/api/mobile/instructor/courses/${courseId}/lessons`,
+    instructorCreateQuiz: (lessonId: number | string) => `/api/mobile/instructor/lessons/${lessonId}/quiz`,
     instructorCourse: (id: number | string) => `/api/mobile/instructor/courses/${id}`,
     instructorLesson: (lessonId: number | string) => `/api/mobile/instructor/lessons/${lessonId}`,
     instructorUpload: '/api/mobile/instructor/upload',

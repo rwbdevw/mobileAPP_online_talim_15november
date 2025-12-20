@@ -3,6 +3,10 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, 
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchCourseDetail, enrollCourse, fetchCourseProgress } from '../api/mobile';
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
+import { ProgressBar } from '../components/ProgressBar';
+import { colors } from '../theme';
 
 export function CourseDetailScreen() {
   const route = useRoute<any>();
@@ -56,34 +60,33 @@ export function CourseDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{data.title}</Text>
-      {!!data.category && <Text style={styles.chip}>{data.category}</Text>}
-      {!!data.instructor && <Text style={styles.meta}>O'qituvchi: {data.instructor.username}</Text>}
-      <Text style={styles.desc}>{data.description}</Text>
-      <Text style={styles.meta}>Narx: {data.price ?? 0}</Text>
-      {typeof progressData?.enrollment_progress === 'number' && (
-        <View style={{ marginTop: 10 }}>
-          <View style={styles.progressWrap}>
-            <View style={[styles.progressFill, { width: `${Math.max(0, Math.min(100, Math.round(progressData?.enrollment_progress ?? 0)))}%` }]} />
-          </View>
-          <Text style={[styles.meta, { marginTop: 4 }]}>Progress: {Math.round(progressData?.enrollment_progress ?? 0)}%</Text>
+      <Card style={{ marginBottom: 12 }}>
+        <Text style={styles.title}>{data.title}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+          {!!data.category && <Text style={styles.chip}>{data.category}</Text>}
+          {!!data.instructor && <Text style={[styles.meta, { marginLeft: 8 }]}>O'qituvchi: {data.instructor.username}</Text>}
         </View>
-      )}
-      <TouchableOpacity style={styles.enroll} onPress={onEnroll}>
-        <Text style={styles.enrollText}>Enroll</Text>
-      </TouchableOpacity>
+        {!!data.description && <Text style={styles.desc}>{data.description}</Text>}
+        <Text style={[styles.meta, { marginTop: 4 }]}>Narx: {data.price ?? 0}</Text>
+        {typeof progressData?.enrollment_progress === 'number' && (
+          <View style={{ marginTop: 10 }}>
+            <ProgressBar value={progressData?.enrollment_progress ?? 0} />
+            <Text style={[styles.meta, { marginTop: 4 }]}>Progress: {Math.round(progressData?.enrollment_progress ?? 0)}%</Text>
+          </View>
+        )}
+        <View style={{ marginTop: 12 }}>
+          <Button title="Kursga yozilish" onPress={onEnroll} />
+        </View>
+      </Card>
 
-      <Text style={[styles.title, { marginTop: 16 }]}>Darslar</Text>
+      <Text style={[styles.title, { marginBottom: 8 }]}>Darslar</Text>
       <FlatList
         data={data.lessons}
         keyExtractor={(l) => String(l.id)}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.lesson}
-            onPress={() => navigation.navigate('LessonPlayer', { title: item.title, videoUrl: item.video_url, lessonId: item.id, courseId })}
-          >
-            <Text style={{ fontWeight: '600' }}>{item.order}. {item.title} {completed.has(item.id) ? '✓' : ''}</Text>
-          </TouchableOpacity>
+          <Card onPress={() => navigation.navigate('LessonPlayer', { title: item.title, videoUrl: item.video_url, lessonId: item.id, courseId })}>
+            <Text style={{ fontWeight: '600', color: colors.text }}>{item.order}. {item.title} {completed.has(item.id) ? '✓' : ''}</Text>
+          </Card>
         )}
         ListEmptyComponent={<Text>Hali darslar yoʻq</Text>}
       />
@@ -92,15 +95,10 @@ export function CourseDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 20, fontWeight: '700', marginBottom: 8 },
-  chip: { alignSelf: 'flex-start', backgroundColor: '#eff6ff', color: '#1d4ed8', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, marginBottom: 6 },
+  title: { fontSize: 20, fontWeight: '700', marginBottom: 8, color: colors.text },
+  chip: { alignSelf: 'flex-start', backgroundColor: '#eff6ff', color: '#1d4ed8', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999 },
   desc: { color: '#555', marginBottom: 6 },
   meta: { color: '#444' },
-  enroll: { alignSelf: 'flex-start', backgroundColor: '#16a34a', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, marginTop: 8 },
-  enrollText: { color: 'white', fontWeight: '700' },
-  lesson: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  progressWrap: { height: 8, backgroundColor: '#e5e7eb', borderRadius: 999, overflow: 'hidden' },
-  progressFill: { height: 8, backgroundColor: '#2563eb' },
 });
